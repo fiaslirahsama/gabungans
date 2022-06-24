@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}DB Member{% endblock %}</h1>
+  <a class="action button-menu" href="{{ url_for('buku.data_buku') }}">Database Buku</a>
+  <a class="action button-menu" href="{{ url_for('index') }}">Kembali</a>
+{% endblock %}
+
+{% block content %}
+<table width="100%">
+  <tr>
+    <td><button class="button-input100" id="btnmodaltambahmember"><b>Tambah Member</b></button></td>
+    <td><button class="button-input100" id="btnmodaluploadmember"><b>Upload CSV</b></button></td>
+  </tr>
+</table>
+
+<!-- MODAL TAMBAH MEMBER-->
+<div id="modaltambahmember" class="modaltambahmember">
+  <div class="modaltambahmember-content">
+    <span class="closetambahmember">&times;</span>
+    <div class="modal-header">
+      <h1>Tambah Member</h1>
+    </div>
+    <div class="modal-body">
+      <form method="POST" action="{{ url_for('member.tambah_member') }}">
+        <table style="border: 2px solid green; padding:10px;">
+          <tr>
+            <td><label for="idmember">ID Member</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="idmember" id="idmember" value="{{generateid}}" required readonly></td>
+          </tr>
+          <tr>
+            <td><label for="nik">Nomor KTP</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="nik" id="nik" required></td>
+          </tr>
+          <tr>
+            <td><label for="nama">Nama</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="nama" id="nama" required></td>
+          </tr>
+          <tr>
+            <td><label for="jenis_kelamin">Jenis Kelamin</label></td>
+            <td><h3>:</h3></td>
+            <td><select style="width:100%; height: 40px; font-size:24px;" name="jenis_kelamin" id="jenis_kelamin" required>
+                <option value="Laki-Laki">Laki-Laki</option>
+                <option value="Perempuan">Perempuan</option>   
+            </select></td>
+          </tr>
+          <tr>
+            <td><label for="alamat">Alamat</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="alamat" id="alamat" required></td>
+          </tr>
+          <tr>
+            <input name="created_by" id="created_by" value="{{ g.admin['nama'] }}" type="hidden">
+          </tr>
+          <tr>
+            <td align="center" colspan="3"><button class="button-input" name="tambahmember" type="submit">Tambah Member</button></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- END MODAL TAMBAH MEMBER-->
+
+  <!-- MODAL UPLOAD MEMBER -->
+  <div id="modaluploadmember" class="modaluploadmember">
+    <div class="modaluploadmember-content">
+      <span class="closeuploadmember">&times;</span>
+      <div class="modal-header">
+        <h1 align="center">Upload CSV</h1>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('member.upload_member') }}" enctype="multipart/form-data">
+          <p><input style="width:100%; height: 40px; font-size:24px;" type="file" name="filemember" accept=".csv"></p>
+          <input name="created_by" id="created_by" value="{{ g.admin['nama'] }}" type="hidden">
+          <input name="updated_by" id="updated_by" value="{{ g.admin['nama'] }}" type="hidden">
+          <p><button class="button-input100" name="uploaddatamember" type="submit"><b>UPLOAD</b></button></p>
+        </form>
+        <h3 align="center">Harap UPLOAD sesuai format seperti tabel dibawah</h3>
+        <table  align="center" border="1">
+          <tr>
+            <th>ID MEMBER</th>
+            <th>NO TANDA PENGENAL</th>
+            <th>NAMA MEMBER</th>
+            <th>JENIS KELAMIN</th>
+            <th>ALAMAT</th>
+          </tr>
+          <tr>
+            <td>000001</td>
+            <td>000001</td>
+            <td>Budi</td>
+            <td>Laki-Laki</td>
+            <td>Surabaya</td>
+          </tr>
+          <tr>
+            <td>000002</td>
+            <td>000002</td>
+            <td>Ani</td>
+            <td>Perempuan</td>
+            <td>Surabaya</td>
+          </tr>
+        </table>
+        <h3 align="center">Format CSV Bisa Didownload Dibawah Ini</h3>
+        <form align="center" action="{{ url_for('member.download_format_member') }}" method="POST" >
+          <input name="ci" id="ci" value="format" type="hidden">
+          <button class="button-input" name="downloadformatmember" type="submit"><b>Download</b></button>
+        </form>
+      </div>
+    </div>
+  </div>
+<!-- END MODAL MEMBER-->
+
+<hr>
+<!-- KOTAK PENCARIAN-->
+<button class="button-cari100" onclick="showPencarian()"><b>Kotak Pencarian</b></button>
+<div id="kotakPencarian" style="display: none">
+  <h4>Kotak Pencarian</h4>
+  <form method="POST">
+    <table style="border: 2px solid blue; padding:20px;">
+      <tr>
+        <td><label for="cariidmember">ID Member</label></td>
+        <td><h3>:</h3></td>
+        <td><input style="width:100%" name="cariidmember" id="cariidmember"></td>
+      </tr>
+      <tr>
+        <td><label for="carinik">Nomor KTP</label></td>
+        <td><h3>:</h3></td>
+        <td><input style="width:100%" name="carinik" id="carinik"></td>
+      </tr>
+      <tr>
+        <td><label for="carinama">Nama</label></td>
+        <td><h3>:</h3></td>
+        <td><input style="width:100%" name="carinama" id="carinama"></td>
+      </tr>
+      <tr>
+        <td><label for="carijenis_kelamin">Jenis Kelamin</label></td>
+        <td><h3>:</h3></td>
+        <td><select style="width:100%; height: 40px; font-size:24px;" name="carijenis" id="carijenis">
+            <option value=""></option>
+            <option value="Laki-Laki">Laki-Laki</option>
+            <option value="Perempuan">Perempuan</option>   
+        </select></td>
+      </tr>
+      <tr>
+        <td><label for="carialamat">Alamat</label></td>
+        <td><h3>:</h3></td>
+        <td><input style="width:100%" name="carialamat" id="carialamat"></td>
+      </tr>
+      <tr>
+        <td align="center" colspan="3"><button class="button-cari" name="caridatamember" type="submit">Tampilkan Data</button></td>
+      </tr>
+    </table>
+  </form>
+</div>
+<!-- END KOTAK PENCARIAN-->
+<!-- DOWNLOAD DATA MEMBER-->
+  <form action="{{ url_for('member.download_member') }}" method="POST" >
+    <input name="ci" id="ci" value="{{ci}}" type="hidden">
+    <input name="cni" id="cni" value="{{cni}}" type="hidden">
+    <input name="cna" id="cna" value="{{cna}}" type="hidden">
+    <input name="cj" id="cj" value="{{cj}}" type="hidden">
+    <input name="ca" id="ca" value="{{ca}}" type="hidden">
+    <button class="button-input" name="downloaddatamember" type="submit"><b>Download</b></button>
+  </form>
+<!-- END DOWNLOAD DATA MEMBER-->
+  <hr>
+<!-- MENAMPILKAN DATA MEMBER -->
+  <h4>Data Member</h4>
+  <table border ="1" id="datamember" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th class="th-sm">No</th>
+        <th class="th-sm">ID Member</th>
+        <th class="th-sm">NIK</th>
+        <th class="th-sm">Nama</th>
+        <th class="th-sm">Jenis Kelamin</th>
+        <th class="th-sm">Alamat</th>
+        <th class="th-sm">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set count = namespace(value=1) %}
+      {% for memberss in members | sort(attribute='idmember') %}
+          <tr>
+              <td>{{ count.value }}{% set count.value = count.value + 1 %}</td>
+              <td>{{ memberss['idmember'] }}</td>
+              <td>{{ memberss['nik'] }}</td>
+              <td>{{ memberss['nama'] }}</td>
+              <td>{{ memberss['jenis_kelamin'] }}</td>
+              <td>{{ memberss['alamat'] }}</td>
+              <td><a class="button-edit" href="{{ url_for('member.update_member' ,id=memberss[0]) }}">Edit</a></td>
+            </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<!-- END MENAMPILKAN DATA MEMBER -->
+  {% block script %}
+
+<script type="text/javascript">
+  window.onload = function(){ 
+
+    var modaltambahmember = document.getElementById("modaltambahmember");
+    var modaluploadmember = document.getElementById("modaluploadmember");
+
+    
+    // Get the button that opens the modal
+
+    var btntambahmember = document.getElementById("btnmodaltambahmember");
+    var btnuploadmember = document.getElementById("btnmodaluploadmember");
+
+    
+    // Get the <span> element that closes the modal
+
+    var spantambahmember = document.getElementsByClassName("closetambahmember")[0];
+    var spanuploadmember = document.getElementsByClassName("closeuploadmember")[0];
+    
+    // When the user clicks the button, open the modal 
+
+    btntambahmember.onclick = function() {
+      modaltambahmember.style.display = "block";
+    }
+    btnuploadmember.onclick = function() {
+      modaluploadmember.style.display = "block";
+    }
+
+    
+    // When the user clicks on <span> (x), close the modal
+
+    spantambahmember.onclick = function() {
+      modaltambahmember.style.display = "none";
+    }
+    spanuploadmember.onclick = function() {
+      modaluploadmember.style.display = "none";
+    }
+
+    
+    // When the user clicks anywhere outside of the modal, close it
+
+    window.onclick = function(event) {
+      if (event.target == modaltambahmember) {
+        modaltambahmember.style.display = "none";
+      }
+      else if (event.target == modaluploadmember) {
+        modaluploadmember.style.display = "none";
+      }
+    }
+
+    };
+
+  function showPencarian() {
+  var kp = document.getElementById("kotakPencarian");
+  if (kp.style.display === "none") {
+    kp.style.display = "block";
+  } else {
+    kp.style.display = "none";
+  }
+  };
+
+  $(document).ready(function () {
+    $('#datamember').DataTable({
+      "paging": true, // false to disable pagination (or any other option)
+      "searching":false
+    });
+    $('.dataTables_length').addClass('bs-select');
+  });
+
+  // function refreshPage(){
+  //     window.location.reload();
+  // } 
+  // function sortTable(n) {
+  //   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  //   table = document.getElementById("datamember");
+  //   switching = true;
+  //   // Set the sorting direction to ascending:
+  //   dir = "asc";
+  //   /* Make a loop that will continue until
+  //   no switching has been done: */
+  //   while (switching) {
+  //     // Start by saying: no switching is done:
+  //     switching = false;
+  //     rows = table.rows;
+  //     /* Loop through all table rows (except the
+  //     first, which contains table headers): */
+  //     for (i = 1; i < (rows.length - 1); i++) {
+  //       // Start by saying there should be no switching:
+  //       shouldSwitch = false;
+  //       /* Get the two elements you want to compare,
+  //       one from current row and one from the next: */
+  //       x = rows[i].getElementsByTagName("TD")[n];
+  //       y = rows[i + 1].getElementsByTagName("TD")[n];
+  //       /* Check if the two rows should switch place,
+  //       based on the direction, asc or desc: */
+  //       if (dir == "asc") {
+  //         if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+  //           // If so, mark as a switch and break the loop:
+  //           shouldSwitch = true;
+  //           break;
+  //         }
+  //       } else if (dir == "desc") {
+  //         if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+  //           // If so, mark as a switch and break the loop:
+  //           shouldSwitch = true;
+  //           break;
+  //         }
+  //       }
+  //     }
+  //     if (shouldSwitch) {
+  //       /* If a switch has been marked, make the switch
+  //       and mark that a switch has been done: */
+  //       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+  //       switching = true;
+  //       // Each time a switch is done, increase this count by 1:
+  //       switchcount ++;
+  //     } else {
+  //       /* If no switching has been done AND the direction is "asc",
+  //       set the direction to "desc" and run the while loop again. */
+  //       if (switchcount == 0 && dir == "asc") {
+  //         dir = "desc";
+  //         switching = true;
+  //       }
+  //     }
+  //   }
+  // }
+</script>
+{% endblock %}
+{% endblock %}

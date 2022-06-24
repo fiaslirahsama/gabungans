@@ -1,0 +1,145 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Hospital</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>  
+<body>
+{% extends 'dashboard/Dashboard.html'%}
+
+{% block content %}
+<form name="searchForm" method="post" action='{{url_for("trans_bp.master_trans")}}'>
+    <table id="table-inputSearch">
+      <tr><td>ID Pasien : </td><td><input class="form-control" type="text" name="idPasien" id="id"></td></tr>
+      <tr><td>Nama Pasien : </td><td><input class="form-control" type="text" name="namaPasien" id="nama"></td></tr>
+      <tr><td>Status Bayar : </td>
+        <td>
+          <select class="form-control" name="statusBayar" id="statusBayar">
+            <option value="">Silahkan Pilih Opsi</option>
+            <option value="Y">Sudah</option>
+            <option value="N">Belum</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><input class="btn-search" type="submit" value="Search"></td>
+      </tr>
+    </table>   
+</form>
+  
+  <table id="table-list" border=5>  
+      <thead>
+          <td>ID Trans</td>
+          <td>Nama Dokter</td>
+          <td>Nama Pasien</td>
+          <td>Keluhan</td>
+          <td>Detail</td>
+      </thead> 
+  
+      {% for row in datas %}
+          <tr>
+              <td>{{row.id_trans}}</td>
+              <td id="namaDokter">{{row.nama_dokter}}</td>
+              <td>{{row.nama_pasien}}</td>
+              <td>{{row.keluhan}}</td>
+              <td><button id="btn-edit" class="btn-addFile" data-toggle="modal" data-target="#detailTrans{{row.id_trans}}">Detail</button></td>
+              
+
+              <!-- Modal Edit -->
+              <div id="detailTrans{{row.id_trans}}" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-xs-center">Detail Trans</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" method="POST" action=''>
+                                <div class="form-group">
+                                    <label class="control-label">ID Dokter</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="noPasien" id="noPasien" value="{{row.id_dokter}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">ID Dokter</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="noPasien" id="noPasien" value="{{row.nama_dokter}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">ID Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="noPasien" id="noPasien" value="{{row.no_pasien}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nama Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="namaPasien" id="namaPasien" value="{{row.nama_pasien}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Keluhan</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="idDokter" value="{{row.keluhan}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Status Pembayaran</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="namaDokter" id="statusPembayaran{{row.id_trans}}" value="{{row.status_bayar}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Harga Bayar</label>
+                                  <div>
+                                    <input id="hariKerjaEditInput1" type="text" class="form-control input-lg" name="hariKerja" value="{{row.harga_bayar}}" readonly>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Resep Dokter</label>
+                                    <div>
+                                      <input id="hariKerjaEditInput1" type="text" class="form-control input-lg" name="hariKerja" value="{{row.resep_dokter}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Created Date</label>
+                                    <div>
+                                      <input id="hariKerjaEditInput1" type="text" class="form-control input-lg" name="hariKerja" value="{{row.created_date}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Updated Date</label>
+                                    <div>
+                                      <input id="hariKerjaEditInput1" type="text" class="form-control input-lg" name="hariKerja" value="{{row.updated_date}}" readonly>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+              <script>
+                $(document).ready(function(){
+                  var status = $("#statusPembayaran{{row.id_trans}}").val()
+                  if(status == "N"){
+                    $("#statusPembayaran{{row.id_trans}}").val("Belum Bayar");
+                  } else if(status == "Y"){
+                    $("#statusPembayaran{{row.id_trans}}").val("Sudah Bayar");
+                  }
+                });
+              </script>
+      {% endfor %}
+  
+  </table>  
+  <br><br>
+
+  
+{% endblock%}
+</body>
+
+</html>

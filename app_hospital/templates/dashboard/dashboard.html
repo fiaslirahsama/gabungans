@@ -1,0 +1,110 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Hospital</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles.css')}}" />
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='bootstrap.css')}}"/>
+    <script src="{{url_for('static', filename='jquery.js')}}"></script>
+    <script src="{{url_for('static', filename='popper.js')}}"></script>
+    <script src="{{url_for('static', filename='bootstrapjs.js')}}"></script>
+
+    <script>
+      $(document).ready(function() {
+          var messages = "{{ get_flashed_messages() }}";
+    
+          if (typeof messages != 'undefined' && messages != '[]') {
+              $("#myModal").modal('show');
+          };
+
+          var status = "{{username.status_auth}}";
+          if(status == "dokter"){
+            document.getElementById("menu-pasien").style.display = "none";
+            document.getElementById("menu-master").style.display = "none";
+            document.getElementById("menu-admin").style.display = "none";
+            document.getElementById("record-trans").style.display = "none";
+          } else if(status == "pasien"){
+            document.getElementById("menu-dokter").style.display = "none";
+            document.getElementById("record-trans").style.display = "none";
+            document.getElementById("menu-master").style.display = "none";
+            document.getElementById("menu-admin").style.display = "none";
+          } else if(status == "admin"){
+            document.getElementById("menu-pasien").style.display = "none";
+            document.getElementById("menu-dokter").style.display = "none";
+            document.getElementById("record-trans").style.display = "none";
+            document.getElementById("menu-master").style.display = "none";
+          }
+      });
+    </script>
+</head>  
+<body>
+  <h1 class="header">Simple Hospital</h1>
+  <div class="navbar-crud">
+    <a href="{{url_for('dashboard_bp.dashboard')}}">Home</a>
+    <a href="{{url_for('trans_bp.master_trans')}}" id="record-trans">Record Trans</a>
+    <div class="dropdown-crud" id="pasien">
+      <button class="dropbtn-crud" id="menu-pasien">Pasien
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content-crud">
+        <a href="{{url_for('trans_bp.show_dokter')}}">Book Dokter</a>
+        <a href="{{url_for('trans_bp.detail_book_pasien')}}">View Detail Book</a>
+      </div>
+    </div>
+    <a href="{{url_for('trans_bp.checking_dokter')}}" id="menu-dokter">Checking Dokter</a>
+    <div class="dropdown-crud" id="menu-admin">
+      <button class="dropbtn-crud">Payment
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content-crud">
+        <a href="{{url_for('trans_bp.payment')}}">Payment</a>
+        <a href="{{url_for('trans_bp.dokter_trans')}}">Dokter Trans</a>
+      </div>
+    </div>
+    <div class="dropdown-crud" id="menu-master">
+      <button class="dropbtn-crud">Master
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content-crud">
+        <a href="{{url_for('dokter_bp.master_dokter')}}">Master Dokter</a>
+        <a href="{{url_for('pasien_bp.master_pasien')}}">Master Pasien</a>
+        <a href="{{url_for('admin_bp.master_admin')}}">Master Admin</a>
+      </div>
+    </div>
+    <a id="btn-logout" href="/logout">Logout</a>
+    <p id="username-dashboard">{{username.username}}</p>
+    <a href="/perpus">app perpus</a>
+  </div>
+  <!-- MODAL -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content-handling">
+          <div class="modal-header-handling">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">CAUTION</h4>
+          </div>
+          <div class="modal-body-handling">
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+              <ul class=flashes>
+                  {% for message in messages %}
+                  <li>{{ message }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+              {% endwith %}
+          </div>
+          <div class="modal-footer-handling">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+      </div>
+
+  </div>
+</div>
+  {% block content %}
+  
+  {% endblock %}
+</body>  
+</html>

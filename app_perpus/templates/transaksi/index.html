@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Data Transaksi{% endblock %}</h1>
+  {% if g.admin %}
+    <a class="action button-menu" href="{{ url_for('buku.data_buku') }}">Database Buku</a>
+    <a class="action button-menu" href="{{ url_for('member.data_member') }}">Database Member</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if g.admin %}
+<!-- MODAL TAMBAH TRANSAKSI -->
+<button class="button-input100" id="btnmodaltambahtransaksi"><b>Tambah Transaksi</b></button>
+<hr>
+<div id="modaltambahtransaksi" class="modaltambahtransaksi">
+  <div class="modaltambahtransaksi-content">
+    <span class="closetambahtransaksi">&times;</span>
+    <div class="modal-header">
+      <h1>Tambah Transaksi</h1>
+    </div>
+    <div class="modal-body">
+      <form method="POST" action="{{ url_for('transaksi.tambahtransaksi') }}">
+        <table style="border: 2px solid green; padding:10px;">
+          <tr>
+            <td><label for="kodebuku">Kode Buku</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="kodebuku" id="kodebuku" required></td>
+          </tr>
+          <tr>
+            <td><label for="idmember">ID Member</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="idmember" id="idmember" required></td>
+          </tr>
+          <tr>
+            <td><label for="jumlah_hari">Jumlah Hari Peminjaman</label></td>
+            <td><h3>:</h3></td>
+            <td><input type="number" style="width:100%" id="jumlah_hari" name="jumlah_hari"></td>
+          </tr>
+          <tr>
+            <input name="idadmin" id="idadmin" value="{{ g.admin['id'] }}" type="hidden">
+          </tr>
+          <tr>
+            <input name="created_by" id="created_by" value="{{ g.admin['nama'] }}" type="hidden">
+          </tr>
+          <tr>
+            <td align="center" colspan="3"><button class="button-input" type="submit">Tambah Transaksi</button></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+<!-- END MODAL TRANSAKSI-->
+<!-- KOTAK PENCARIAN -->
+<button class="button-cari100" onclick="showPencarian()"><b>Kotak Pencarian</b></button>
+<div id="kotakPencarian" style="display: none">
+<form method="POST">
+  <table style="border: 2px solid blue; padding:20px;">
+    <tr>
+      <td><label for="caripeminjam">Cari berdasarkan nama peminjam</label></td>
+      <td><h3>:</h3></td>
+      <td colspan ="3"><input style="width:100%" name="caripeminjam" value="" id="caripeminjam"></td>
+    </tr>
+    <tr>
+      <td><label for="carijudul">Cari berdasarkan judul buku</label></td>
+      <td><h3>:</h3></td>
+      <td colspan ="3"><input style="width:100%" name="carijudul" value="" id="carijudul"></td>
+    </tr>
+    <tr>
+      <td rowspan="2"><label for="cariwaktu">Cari berdasarkan Waktu Pengembalian</label></td>
+      <td rowspan="2"><h3>:</h3></td>
+      <td align="center"><label>Setelah</label></td>
+      <td align="center"><label>Sebelum</label></td>
+    </tr>
+    <tr>
+      <td><input style="width:100%; height: 40px; font-size:24px;" type="date" name="cariwaktu1" value="" id="cariwaktu1"></td>
+      <td><input style="width:100%; height: 40px; font-size:24px;" type="date" name="cariwaktu2" value="" id="cariwaktu2"></td>
+    </tr>
+    <tr>
+      <td colspan="4" align="center"><button class="button-cari" name="caridatatransaksi" type="submit"><b>Tampilkan Data</b></button></td>
+    </tr>
+  </table>
+</form>
+</div>
+<!-- END KOTAK PENCARIAN -->
+<!-- DOWNLOAD DATA TRANSAKSI -->
+{% if g.admin %}
+<form action="{{ url_for('transaksi.downloadtransaksi') }}" method="POST" >
+  <input name="cp" id="cp" value="{{cp}}" type="hidden">
+  <input name="cj" id="cj" value="{{cj}}" type="hidden">
+  <input name="cw1" id="cw1" value="{{cw1}}" type="hidden">
+  <input name="cw2" id="cw2" value="{{cw2}}" type="hidden">
+  <button class="button-input" name="downloaddatatransaksi" type="submit"><b>Download</b></button>
+</form>
+{% endif %}
+<!-- END DOWNLOAD DATA TRANSAKSI -->
+<!-- MENAMPILKAN DATA TRANSAKSI -->
+<table id="datatransaksi" border="1" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th class="th-sm">No</th>
+      <th class="th-sm">Peminjam</th>
+      <th class="th-sm">Judul Buku</th>
+      <th class="th-sm">Tanggal Pinjam</th>
+      <th class="th-sm">Tanggal Kembali</th>
+      <th class="th-sm">Admin</th>
+      {% if g.admin %}
+      <th>Action</th>
+      {% endif %}
+    </tr>
+  </thead>  
+  <tbody>
+    {% set count = namespace(value=1) %}
+    {% for transaksiss in transaksis %}
+        <tr>
+            <td>{{ count.value }}{% set count.value = count.value + 1 %}</td>
+            <td>{{ transaksiss[1] }}</td>
+            <td>{{ transaksiss[2] }}</td>
+            <td>{{ transaksiss[3] }}</td>
+            <td>{{ transaksiss[4] }}</td>
+            <td>{{ transaksiss[5] }}</td>
+            {% if g.admin %}
+            <td><a class="button-edit" href="{{ url_for('transaksi.updatetransaksi', id=transaksiss[0]) }}">Pengembalian</a></td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<!-- END MENAMPILKAN DATA TRANSAKSI-->
+{% block script %}
+<script type="text/javascript">
+window.onload = function(){ 
+
+var modaltambahtransaksi = document.getElementById("modaltambahtransaksi");
+
+// Get the button that opens the modal
+
+var btntambahtransaksi = document.getElementById("btnmodaltambahtransaksi");
+
+// Get the <span> element that closes the modal
+
+var spantambahtransaksi = document.getElementsByClassName("closetambahtransaksi")[0];
+
+// When the user clicks the button, open the modal 
+
+btntambahtransaksi.onclick = function() {
+  modaltambahtransaksi.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+
+spantambahtransaksi.onclick = function() {
+  modaltambahtransaksi.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+
+window.onclick = function(event) {
+  if (event.target == modaltambahtransaksi) {
+    modaltambahtransaksi.style.display = "none";
+  }
+}
+};
+
+function showPencarian() {
+  var kp = document.getElementById("kotakPencarian");
+  if (kp.style.display === "none") {
+    kp.style.display = "block";
+  } else {
+    kp.style.display = "none";
+  }
+  };
+
+  $(document).ready(function () {
+    $('#datatransaksi').DataTable({
+      "paging": true, // false to disable pagination (or any other option)
+      "searching":false
+    });
+    $('.dataTables_length').addClass('bs-select');
+  });
+</script>
+{% endblock %}
+{% endblock %}

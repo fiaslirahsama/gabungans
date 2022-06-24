@@ -1,0 +1,112 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Hospital</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>  
+<body>
+{% extends 'dashboard/dashboard.html'%}
+
+{% block content %}  
+  <table id="table-list" border=5>  
+      <thead>  
+          <td>ID Pasien</td>  
+          <td>Nama Pasien</td>
+          <td>Nama Dokter</td>
+          <td>Keluhan</td>
+          <td>Detail</td>
+      </thead> 
+  
+      {% for row in datas %}
+          <tr>
+              <td id="idPasien">{{row.no_pasien}}</td>  
+              <td id="namaPasien">{{row.nama_pasien}}</td>
+              <td id="namaDokter">{{row.nama_dokter}}</td>
+              <td>{{row.keluhan}}</td>
+              <td><button id="btn-edit" class="btn-addFile" data-toggle="modal" data-target="#detailPasien{{row.id_trans}}">Details</button></td>
+              
+              <!-- Modal Detail -->
+              <div id="detailPasien{{row.id_trans}}" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-xs-center">Detail Pasien</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" method="POST" action=''>
+                                <div class="form-group">
+                                    <label class="control-label">ID Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="idPasien" value="{{row.no_pasien}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nama Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="namaPasien" value="{{row.nama_pasien}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Nama Dokter</label>
+                                  <div>
+                                      <input type="text" class="form-control input-lg" name="alamatPasien" value="{{row.nama_dokter}}" readonly>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Status Pemeriksaan</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" id="statusPeriksa{{row.id_trans}}" name="alamatPasien" value="{{row.status_checking_dokter}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divStatusBayar{{row.id_trans}}">
+                                    <label class="control-label">Status Bayar</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" id="statusBayar{{row.id_trans}}" name="alamatPasien" value="{{row.status_bayar}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divHargaBayar{{row.id_trans}}">
+                                    <label class="control-label">Harga Bayar</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" id="hargaBayar{{row.id_trans}}" name="alamatPasien" value="{{row.harga_bayar}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divResepDokter{{row.id_trans}}">
+                                    <label class="control-label">Resep Dokter</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" id="resepDokter{{row.id_trans}}" name="alamatPasien" value="{{row.resep_dokter}}" readonly>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+              <script>
+                $(document).ready(function(){
+                    if($("#statusPeriksa{{row.id_trans}}").val() == "N"){
+                        $("#statusPeriksa{{row.id_trans}}").val("Belum Diperiksa");
+                        document.getElementById("divStatusBayar{{row.id_trans}}").style.display = 'none';
+                        document.getElementById("divHargaBayar{{row.id_trans}}").style.display = 'none';
+                        document.getElementById("divResepDokter{{row.id_trans}}").style.display = 'none';
+                    } else if($("#statusPeriksa{{row.id_trans}}").val() == "Y") {
+                        $("#statusPeriksa{{row.id_trans}}").val("Sudah Diperiksa");
+                    }
+                    if($("#statusBayar{{row.id_trans}}").val() == "Y"){
+                        $("#statusBayar{{row.id_trans}}").val("Sudah Bayar");
+                    } else if($("#statusBayar{{row.id_trans}}").val() == "N") {
+                        $("#statusBayar{{row.id_trans}}").val("Belum Bayar");
+                    }
+                });
+              </script>
+      {% endfor %}
+  
+  </table>  
+  <br><br>
+{% endblock%}
+</body>
+
+</html>

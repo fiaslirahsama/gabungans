@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}DB Buku{% endblock %}</h1>
+  <!-- <a class="action button-menu" href="{{ url_for('buku.data_kode') }}">Data Kode</a> -->
+  <a class="action button-menu" href="{{ url_for('member.data_member') }}">Database Member</a>
+  <a class="action button-menu" href="{{ url_for('index') }}">Kembali</a>
+{% endblock %}
+
+{% block content %}
+<table width="100%">
+  <tr>
+    <td><button class="button-input100" id="btnmodaltambahbuku"><b>Tambah Buku</b></button></td>
+    <td><button class="button-input100" id="btnmodaluploadbuku"><b>Upload CSV</b></button></td>
+  </tr>
+</table>
+<!--MODAL TAMBAH BUKU-->
+<div id="modaltambahbuku" class="modaltambahbuku">
+  <div class="modaltambahbuku-content">
+    <span class="closetambahbuku">&times;</span>
+    <div class="modal-header">
+      <h1>Tambah Buku</h1>
+    </div>
+    <div class="modal-body">
+      <form method="POST" action="{{ url_for('buku.tambah_buku') }}">
+        <table style="border: 2px solid green; padding:10px;">
+          <tr>
+            <td><label for="kodebuku">Kode Buku</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="kodebuku" id="kodebuku" value="{{generate_id}}" required></td>
+          </tr>
+          <tr>
+            <td><label for="judul">Judul Buku</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="judul" id="judul" required></td>
+          </tr>
+          <tr>
+            <td><label for="genre">Genre Buku</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="genre" id="genre" required></td>
+          </tr>
+          <tr>
+            <td><label for="lokasi">Lokasi Buku</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="lokasi" id="lokasi" required></td>
+          </tr>
+          <tr>
+            <input name="status" id="status" value="ada" type="hidden">
+          </tr>
+          <tr>
+            <input name="created_by" id="created_by" value="{{ g.admin['nama'] }}" type="hidden">
+          </tr>
+          <tr>
+            <td align="center" colspan="3"><button class="button-input" type="submit" name="tambahbuku">Tambah Buku</button></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
+  <!-- END MODAL TAMBAH BUKU-->
+  
+  <!-- MODAL UPLOAD BUKU-->
+  <div id="modaluploadbuku" class="modaluploadbuku">
+    <div class="modaluploadbuku-content">
+      <span class="closeuploadbuku">&times;</span>
+      <div class="modal-header">
+        <h1 align="center">Upload CSV</h1>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('buku.upload_buku') }}" enctype="multipart/form-data">
+          <p><input style="width:100%; height: 40px; font-size:24px;" type="file" name="filebuku" accept=".csv"></p>
+            <input name="created_by" id="created_by" value="{{ g.admin['nama'] }}" type="hidden">
+            <input name="updated_by" id="updated_by" value="{{ g.admin['nama'] }}" type="hidden">
+          <p><button class="button-input100" name="uploaddatabuku" type="submit"><b>UPLOAD</b></button></p>
+        </form>
+        <h3 align="center">Harap UPLOAD sesuai format seperti tabel dibawah</h3>
+        <table  align="center" border="1">
+          <tr>
+            <th>KODE BUKU</th>
+            <th>JUDUL BUKU</th>
+            <th>GENRE</th>
+            <th>LOKASI</th>
+          </tr>
+          <tr>
+            <td>000001</td>
+            <td>Buku 1</td>
+            <td>Genre Buku 1</td>
+            <td>Ini lokasi rak buku 1</td>
+          </tr>
+          <tr>
+            <td>000002</td>
+            <td>Buku 2</td>
+            <td>Genre Buku 2</td>
+            <td>Ini lokasi rak buku 2</td>
+          </tr>
+        </table>
+        <h3 align="center">Format CSV Bisa Didownload Dibawah Ini</h3>
+        <form action="{{ url_for('buku.download_format_buku') }}" method="POST" >
+          <input name="ci" id="ci" value="format" type="hidden">
+          <button class="button-input" name="downloadformatbuku" type="submit"><b>Download</b></button>
+        </form>
+      </div>
+    </div>
+  </div>
+<!-- END MODAL UPLOAD BUKU -->
+<!-- KOTAK PENCARIAN-->
+<hr>
+<button class="button-cari100" onclick="showPencarian()"><b>Kotak Pencarian</b></button>
+<div id="kotakPencarian" style="display: none">
+  <h4>Kotak Pencarian</h4>
+  <form method="POST">
+    <table style="border: 2px solid blue; padding:20px;">
+      <tr>
+        <td><label for="carikodebuku">Cari berdasarkan kode buku</label></td>
+        <td><h3>:</h3></td>
+        <td colspan ="2"><input style="width:100%" name="carikodebuku" id="carikodebuku"></td>
+      </tr>
+      <tr>
+        <td><label for="carijudul">Cari berdasarkan judul</label></td>
+        <td><h3>:</h3></td>
+        <td colspan ="2"><input style="width:100%" name="carijudul" id="carijudul"></td>
+      </tr>
+      <tr>
+        <td><label for="carigenre">Cari berdasarkan genre</label></td>
+        <td><h3>:</h3></td>
+        <td colspan="2"><input style="width:100%" name="carigenre" id="carigenre"></td>
+      </tr>
+      <tr>
+        <td><label>Tampilkan Data Buku</label></td>
+        <td></td>
+        <td><input type="checkbox" name="caripinjam" value="dipinjam">Buku yang dipinjam</td>
+        <td><input type="checkbox" name="cariada" value="ada">Buku yang tersedia</td>
+      </tr>
+      <tr>
+        <td align="center" colspan="4"><button class="button-cari" name="caridatabuku" type="submit"><b>Tampilkan Data</b></button></td>
+      </tr>
+    </table>
+  </form>
+</div>
+<!-- END KOTAK PENCARIAN -->
+<!-- DOWNLOAD BUKU-->
+  <form action="{{ url_for('buku.download_buku') }}" id="downloadbuku" method="POST" >
+    <input name="ci" id="ci" value="{{ci}}" type="hidden">
+    <input name="cj" id="cj" value="{{cj}}" type="hidden">
+    <input name="cg" id="cg" value="{{cg}}" type="hidden">
+    <input name="cp" id="cp" value="{{cp}}" type="hidden">
+    <input name="ca" id="ca" value="{{ca}}" type="hidden">
+    <button class="button-input" name="downloaddatabuku" type="submit"><b>Download</b></button>
+  </form>
+<!-- END DOWNLOAD BUKU-->
+  <hr>
+<!-- MENAMPILKAN DATA BUKU -->
+  <h4>Data Buku</h4>
+  <table border="1" id="databuku" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th class="th-sm">No</th>
+        <th class="th-sm">Kode Buku</th>
+        <th class="th-sm">Judul Buku</th>
+        <th class="th-sm">Genre</th>
+        <th class="th-sm">Lokasi</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>  
+    <tbody>
+      {% set count = namespace(value=1) %}
+      {% for bukuss in bukus %}
+      {% if bukuss[5] == 'ada' %}
+      <tr>
+          <td>{{ count.value }}{% set count.value = count.value + 1 %}</td>
+          <td>{{ bukuss[1] }}</td>
+          <td>{{ bukuss[2] }}</td>
+          <td>{{ bukuss[3] }}</td>
+          <td>{{ bukuss[4] }}</td>
+          <td>{{ bukuss[5] }}</td>
+          <td><a class="button-edit" href="{{ url_for('buku.update_buku_ada', id=bukuss[0]) }}">Edit</a></td>
+      </tr>
+      {% else %}
+      <tr>
+        <td>{{ count.value }}{% set count.value = count.value + 1 %}</td>
+        <td>{{ bukuss[1] }}</td>
+        <td>{{ bukuss[2] }}</td>
+        <td>{{ bukuss[3] }}</td>
+        <td>{{ bukuss[4] }}</td>
+        <td>{{ bukuss[5] }}</td>
+        <td><a class="button-edit" href="{{ url_for('buku.update_buku_dipinjam', id=bukuss[0]) }}">Edit</a></td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+
+  </table>
+<!-- END MENAMPILKAN DATA BUKU-->
+{% block script %}
+<script type="text/javascript">
+  window.onload = function(){ 
+
+    var modaluploadbuku = document.getElementById("modaluploadbuku");
+    var modaltambahbuku = document.getElementById("modaltambahbuku");
+    
+    // Get the button that opens the modal
+
+    var btnuploadbuku = document.getElementById("btnmodaluploadbuku");
+    var btntambahbuku = document.getElementById("btnmodaltambahbuku");
+
+    
+    // Get the <span> element that closes the modal
+
+    var spantambahbuku = document.getElementsByClassName("closetambahbuku")[0];
+    var spanuploadbuku = document.getElementsByClassName("closeuploadbuku")[0];
+    
+    // When the user clicks the button, open the modal 
+
+    btnuploadbuku.onclick = function() {
+      modaluploadbuku.style.display = "block";
+    }
+    btntambahbuku.onclick = function() {
+      modaltambahbuku.style.display = "block";
+    }
+
+    
+    // When the user clicks on <span> (x), close the modal
+
+    spantambahbuku.onclick = function() {
+      modaltambahbuku.style.display = "none";
+    }
+    spanuploadbuku.onclick = function() {
+      modaluploadbuku.style.display = "none";
+    }
+
+    
+    // When the user clicks anywhere outside of the modal, close it
+
+    window.onclick = function(event) {
+      if (event.target == modaluploadbuku) {
+        modaluploadbuku.style.display = "none";
+      }
+      else if(event.target == modaltambahbuku){
+        modaltambahbuku.style.display = "none"
+      }
+    }
+
+    };
+
+  function showPencarian() {
+  var kp = document.getElementById("kotakPencarian");
+  if (kp.style.display === "none") {
+    kp.style.display = "block";
+  } else {
+    kp.style.display = "none";
+  }
+  };
+
+  $(document).ready(function () {
+    $('#databuku').DataTable({
+      "paging": "full", // false to disable pagination (or any other option)
+      "searching":false
+    });
+    $('.dataTables_length').addClass('bs-select');
+  });
+
+</script>
+{% endblock %}
+{% endblock %}

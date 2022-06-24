@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Update Buku {{getbuku['judul']}}{% endblock %}</h1>
+  <a class="action button-menu" href="{{ url_for('buku.data_buku') }}">kembali ke list buku</a>
+{% endblock %}
+
+{% block content %}
+  <form method="POST">
+    <table>
+      <tr>
+        <td><label for="kodebuku">Kode Buku:</label></td>
+        <td><input name="kodebuku" id="kodebuku" value="{{ request.form['kodebuku'] or getbuku['kodebuku'] }}" required readonly></td>
+      </tr>
+      <tr>
+        <td><label for="judul">Judul Buku:</label></td>
+        <td><input name="judul" id="judul" value="{{ request.form['judul'] or getbuku['judul'] }}" required readonly></td>
+      </tr>
+      <tr>
+        <td><label for="genre">Genre Buku:</label></td>
+        <td><input name="genre" id="genre" value="{{ request.form['genre'] or getbuku['genre'] }}" required readonly></td>
+      </tr>
+      <tr>
+        <td><label for="lokasi">Lokasi Buku :</label></td>
+        <td><input name="lokasi" id="lokasi" value="{{ request.form['lokasi'] or getbuku['lokasi'] }}" required></td>
+      </tr>
+      <tr>
+        <input name="status" id="status" value="dipinjam" type="hidden">
+      </tr>
+      <tr>
+        <input name="flag" id="flag" value="updated" type="hidden">
+      </tr>
+      <tr>
+        <input name="created_by" id="created_by" value="{{ g.admin['nama'] }}" type="hidden">
+      </tr>
+      <tr>
+        <input name="updated_by" id="updated_by" value="{{ g.admin['nama'] }}" type="hidden">
+      </tr>
+      <tr>
+        <td><button class="button-input" type="submit">Update buku</button></td>
+      </tr>
+    </table>
+  </form>
+{% endblock %}

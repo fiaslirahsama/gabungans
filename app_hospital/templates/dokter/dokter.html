@@ -1,0 +1,284 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Hospital</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script text='text/javascript'>
+      function showModalAdd(){
+        $("#modal-add").modal('show');
+      }
+    </script>
+</head>  
+<body>
+{% extends 'dashboard/Dashboard.html'%}
+
+{% block content %}
+<form name="searchForm" method="post" action='{{url_for("dokter_bp.master_dokter")}}'>
+    <table id="table-inputSearch">
+      <tr><td>ID Dokter : </td><td><input class="form-control" type="text" name="id_dokter" id="id"></td></tr>
+      <tr><td>Nama Dokter : </td><td><input class="form-control" type="text" name="nama_dokter" id="nama"></td></tr>
+      <tr><td>Hari Kerja : </td>
+        <td>
+          <select class="form-control" name="hari_kerja" id="hariKerjaSearch">
+            <option value="">All Days</option>
+            <option value="Senin">Senin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Kamis">Kamis</option>
+            <option value="Jumat">Jumat</option>
+            <option value="Sabtu">Sabtu</option>
+            <option value="Minggu">Minggu</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>Jam Kerja : </td>
+        <td>
+          <select class="form-control" name="jam_kerja" id="jamKerjaSearch">
+            <option value="">All Shift</option>
+            <option value="shift1">00.00 - 08.00</option>
+            <option value="shift2">08.00 - 16.00</option>
+            <option value="shift3">16.00 - 00.00</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><input class="btn-search" type="submit" value="Search"></td>
+      </tr>
+    </table>   
+</form>
+  <table>
+    <tr>
+      <td>
+        <td><button class="btn-addFile" data-toggle="modal" data-target="#modalAdd">Add</button></td>
+        <td><button class="btn-addFile" data-toggle="modal" data-target="#modalImport">Add With File</button></td>
+        <td><a href='{{url_for("dokter_bp.download_template_dokter")}}' class="btn-addFile">Download Template</a></td>
+      </td>
+    </tr>
+  </table>
+  
+  <table id="table-list" border=5>  
+      <thead>  
+          <td>ID Dokter</td>  
+          <td>Nama Dokter</td>
+          <td>Hari Kerja</td>
+          <td>Jam Kerja</td>
+          <td>Kuota</td>
+          <td>Created Date</td>
+          <td>Updated Date</td>
+          <td>Edit</td>
+          <td>Delete</td>
+      </thead> 
+  
+      {% for row in datas %}
+          <tr>
+              <td id="idDokter">{{row.id_dokter}}</td>  
+              <td id="namaDokter">{{row.nama_dokter}}</td>
+              <td id="hariKerja1">{{row.hari_kerja}}</td>
+              <td id="jamKerjaShow">{{row.jam_kerja}}</td>
+              <td>{{row.kuota}}</td>
+              <td id="createdDate">{{row.created_date}}</td>
+              <td id="updatedDate">{{row.updated_date}}</td>
+              <td><button id="btn-edit" class="btn-addFile" data-toggle="modal" data-target="#editDokter{{row.id_dokter}}">Edit</button></td>
+              <td><a class="link" href='{{url_for("dokter_bp.delete_dokter", id_dokter = row.id_dokter)}}' onclick="confirm('Are you sure to Delete Data ?')">Delete</a></td>
+              
+
+              <!-- Modal Edit -->
+              <div id="editDokter{{row.id_dokter}}" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-xs-center">Edit Dokter</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" method="POST" action='{{url_for("dokter_bp.edit_dokter", id_dokter=row.id_dokter)}}'>
+                                <div class="form-group">
+                                    <label class="control-label">ID Dokter</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="id_dokter1" value="{{row.id_dokter}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Username</label>
+                                  <div>
+                                      <input type="text" class="form-control input-lg" name="username1" value="{{row.username}}">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="control-label">Password</label>
+                                <div>
+                                    <input type="text" class="form-control input-lg" name="password1" value="{{row.password}}">
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nama Dokter</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="nama_dokter1" value="{{row.nama_dokter}}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Hari Kerja</label>
+                                  <div>
+                                    <input id="hariKerjaEditInput1{{row.id_dokter}}" type="text" class="form-control input-lg" name="hari_kerja1" value="{{row.hari_kerja}}" readonly>
+                                  </div>
+                                  <div>
+                                    <select class="form-control" id="hariKerjaEdit1{{row.id_dokter}}" name="hariKerja">
+                                      <option value="Senin">Senin</option>
+                                      <option value="Selasa">Selasa</option>
+                                      <option value="Rabu">Rabu</option>
+                                      <option value="Kamis">Kamis</option>
+                                      <option value="Jumat">Jumat</option>
+                                      <option value="Sabtu">Sabtu</option>
+                                      <option value="Minggu">Minggu</option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Jam Kerja</label>
+                                    <div>
+                                      <input id="jamKerjaEditInput1{{row.id_dokter}}" type="text" class="form-control input-lg" name="jam_kerja1" value="{{row.jam_kerja}}" readonly>
+                                    </div>
+                                    <div>
+                                      <select class="form-control" id="jamKerjaEdit1{{row.id_dokter}}" name="jamKerja" onchange="changeDataJamKerja()">
+                                        <option value="shift1">00.00 - 08.00 || shift-1</option>
+                                        <option value="shift2">08.00 - 16.00 || shift-2</option>
+                                        <option value="shift3">16.00 - 00.00 || shift-3</option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label class="control-label">Kuota</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="kuota1" value="{{row.kuota}}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div>
+                                        <button type="submit" class="btn btn-info btn-block">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+              <script>
+                $(document).ready(function(){
+                  if("{{row.jam_kerja}}" == "shift1"){
+                    $("#jamKerjaEditInput1{{row.id_dokter}}").val("00.00 - 08.00 || shift1");
+                  } else if("{{row.jam_kerja}}" == "shift2"){
+                    $("#jamKerjaEditInput1{{row.id_dokter}}").val("08.00 - 16.00 || shift2");
+                  } else if("{{row.jam_kerja}}" == "shift3"){
+                    $("#jamKerjaEditInput1{{row.id_dokter}}").val("16.00 - 00.00 || shift3");
+                  }
+                  $("#hariKerjaEdit1{{row.id_dokter}}").on('change', function(){
+                    var val = $("#hariKerjaEdit1{{row.id_dokter}}").val();
+                    $("#hariKerjaEditInput1{{row.id_dokter}}").val(val);
+                  });
+                  $("#jamKerjaEdit1{{row.id_dokter}}").on('change', function(){
+                    var val1 = $("#jamKerjaEdit1{{row.id_dokter}}").val();
+                    $("#jamKerjaEditInput1{{row.id_dokter}}").val(val1);
+                  })
+                });
+              </script>
+      {% endfor %}
+  
+  </table>  
+  <br><br>
+
+  <!-- Modal ADD -->
+  <div id="modalAdd" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-xs-center">Add Dokter</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" method="POST" action='{{url_for("dokter_bp.add_dokter")}}'>
+                    <div class="form-group">
+                      <label class="control-label">Username</label>
+                      <div>
+                          <input type="text" class="form-control input-lg" name="username">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">password</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Nama Dokter</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="nama_dokter">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Hari Kerja</label>
+                      <div>
+                          <select class="form-control" id="hariKerja" name="hari_kerja">
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                            <option value="Minggu">Minggu</option>
+                          </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Jam Kerja</label>
+                        <div>
+                          <select class="form-control" id="jamKerja" name="jam_kerja">
+                            <option value="shift1">00.00 - 08.00 || shift-1</option>
+                            <option value="shift2">08.00 - 16.00 || shift-2</option>
+                            <option value="shift3">16.00 - 00.00 || shift-3</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <button type="submit" class="btn btn-info btn-block">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- Modal Import -->
+  <div id="modalImport" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-xs-center">Import Data</h4>
+            </div>
+            <div class="modal-body">
+              <form method="post" action='{{url_for("dokter_bp.import_add_dokter")}}' enctype=multipart/form-data>
+                <div class="form-group">
+                  <label>Input File (XLSX Only)</label>
+                  <input type=file class="form-control-file" name=file>
+                  <br><br>
+                  <input type=submit value=Upload>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+{% endblock%}
+</body>
+
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Hospital</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>  
+<body>
+{% extends 'dashboard/Dashboard.html'%}
+
+{% block content %}
+<form name="searchForm" method="post" action='{{url_for("trans_bp.show_dokter")}}'>
+    <table id="table-inputSearch">
+      <tr><td>ID Dokter : </td><td><input class="form-control" type="text" name="idDokter" id="id"></td></tr>
+      <tr><td>Nama Dokter : </td><td><input class="form-control" type="text" name="namaDokter" id="nama"></td></tr>
+      <tr><td>Hari Kerja : </td>
+        <td>
+          <select class="form-control" name="hariKerja" id="hariKerjaSearch">
+            <option value="">All Days</option>
+            <option value="Senin">Senin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Kamis">Kamis</option>
+            <option value="Jumat">Jumat</option>
+            <option value="Sabtu">Sabtu</option>
+            <option value="Minggu">Minggu</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>Jam Kerja : </td>
+        <td>
+          <select class="form-control" name="jamKerja" id="jamKerjaSearch">
+            <option value="">All Shift</option>
+            <option value="shift1">00.00 - 08.00</option>
+            <option value="shift2">08.00 - 16.00</option>
+            <option value="shift3">16.00 - 00.00</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><input class="btn-search" type="submit" value="Search"></td>
+      </tr>
+    </table>   
+</form>
+  
+  <table id="table-list" border=5>  
+      <thead>  
+          <td>ID Dokter</td>  
+          <td>Nama Dokter</td>
+          <td>Hari Kerja</td>
+          <td>Jam Kerja</td>
+          <td>Kuota</td>
+          <td>Book</td>
+      </thead> 
+  
+      {% for row in datas %}
+          <tr>
+              <td id="idDokter">{{row.id_dokter}}</td>  
+              <td id="namaDokter">{{row.nama_dokter}}</td>
+              <td id="hariKerja1">{{row.hari_kerja}}</td>
+              <td id="jamKerjaShow{{row.id_dokter}}">{{row.jam_kerja}}</td>
+              <td>{{row.kuota}}</td>
+              <td><button id="btn-edit" class="btn-addFile" data-toggle="modal" data-target="#bookDokter{{row.id_dokter}}">Book</button></td>
+              
+
+              <!-- Modal Edit -->
+              <div id="bookDokter{{row.id_dokter}}" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-xs-center">Book Dokter</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" method="POST" action='{{url_for("trans_bp.show_dokter")}}'>
+                                
+                                <div class="form-group" hidden>
+                                    <label class="control-label">ID Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="noPasien" id="noPasien{{row.id_dokter}}" value="{{datas2.no_pasien}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nama Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="namaPasien" id="namaPasien{{row.id_dokter}}" value="{{datas2.nama_pasien}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group" hidden>
+                                    <label class="control-label">ID Dokter</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="idDokter" value="{{row.id_dokter}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nama Dokter</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="namaDokter" value="{{row.nama_dokter}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group" hidden>
+                                  <label class="control-label">Hari Kerja</label>
+                                  <div>
+                                    <input id="hariKerjaEditInput1" type="text" class="form-control input-lg" name="hariKerja" value="{{row.hari_kerja}}" readonly>
+                                  </div>
+                                </div>
+                                <div class="form-group" hidden>
+                                    <label class="control-label">Jam Kerja</label>
+                                    <div>
+                                      <input id="jamKerjaEditInput1" type="text" class="form-control input-lg" name="jamKerja" value="{{row.jam_kerja}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Keluhan</label>
+                                    <div>
+                                      <input id="jamKerjaEditInput1" type="text" class="form-control input-lg" name="keluhan">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div>
+                                        <button type="submit" class="btn btn-info btn-block">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+              <script>
+                $(document).ready(function(){
+                  if($("#jamKerjaShow{{row.id_dokter}}").val() == "shift1"){
+                    $("#jamKerjaShow{{row.id_dokter}}").val("00.00 - 08.00");
+                  } else if($("#jamKerjaShow{{row.id_dokter}}").val() == "shift2"){
+                    $("#jamKerjaShow{{row.id_dokter}}").val("08.00 - 16.00");
+                  } else if($("#jamKerjaShow{{row.id_dokter}}").val() == "shift3"){
+                    $("#jamKerjaShow{{row.id_dokter}}").val("16.00 - 00.00");
+                  }
+                });
+              </script>
+      {% endfor %}
+  
+  </table>  
+  <br><br>
+
+  
+{% endblock%}
+</body>
+
+</html>

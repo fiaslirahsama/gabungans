@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}DB Kode{% endblock %}</h1>
+  <a class="action button-menu" href="{{ url_for('buku.data_buku') }}">Kembali</a>
+{% endblock %}
+
+{% block content %}
+<table width="100%">
+  <tr>
+    <td><button class="button-input100" id="btnmodaltambahrak"><b>Tambah Kode Rak</b></button></td>
+    <td><button class="button-input100" id="btnmodaltambahgenre"><b>Tambah Kode Genre</b></button></td>
+  </tr>
+</table>
+<!--MODAL TAMBAH KODE RAK-->
+<div id="modaltambahrak" class="modaltambahrak">
+  <div class="modaltambahrak-content">
+    <span class="closetambahrak">&times;</span>
+    <div class="modal-header">
+      <h1>Tambah Kode Rak</h1>
+    </div>
+    <div class="modal-body">
+      <form method="POST" action="{{ url_for('buku.tambah_kode_rak') }}">
+        <table style="border: 2px solid green; padding:10px;">
+          <tr>
+            <td><label for="koderak">Kode Rak</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="koderak" id="koderak" required></td>
+          </tr>
+          <tr>
+            <td><label for="namarak">Nama Rak</label></td>
+            <td><h3>:</h3></td>
+            <td><input style="width:100%" name="namarak" id="namarak" required></td>
+          </tr>
+          <tr>
+            <td align="center" colspan="3"><button class="button-input" type="submit" name="tambahkoderak">Tambah Kode Rak</button></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
+  <!-- END MODAL TAMBAH rak-->
+  <!--MODAL TAMBAH KODE genre-->
+<div id="modaltambahgenre" class="modaltambahgenre">
+    <div class="modaltambahgenre-content">
+      <span class="closetambahgenre">&times;</span>
+      <div class="modal-header">
+        <h1>Tambah Kode Genre</h1>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('buku.tambah_kode_genre') }}">
+          <table style="border: 2px solid green; padding:10px;">
+            <tr>
+              <td><label for="kodegenre">Kode Genre</label></td>
+              <td><h3>:</h3></td>
+              <td><input style="width:100%" name="kodegenre" id="kodegenre" required></td>
+            </tr>
+            <tr>
+              <td><label for="namagenre">Nama Rak</label></td>
+              <td><h3>:</h3></td>
+              <td><input style="width:100%" name="namagenre" id="namagenre" required></td>
+            </tr>
+            <tr>
+              <td align="center" colspan="3"><button class="button-input" type="submit" name="tambahkodegenre">Tambah Kode Genre</button></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+  </div>
+    <!-- END MODAL TAMBAH Genre-->
+  <hr>
+<!-- MENAMPILKAN DATA RAK-->
+<button class="button-cari100" onclick="showDataRak()"><b>Data Rak</b></button>
+<div id="dataRak" style="display: none">
+    <h4>Data Rak</h4>
+    <table border="1" id="dataRak" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th class="th-sm">No</th>
+          <th class="th-sm">Kode Rak</th>
+          <th class="th-sm">Nama Rak</th>
+          <th>Action</th>
+        </tr>
+      </thead>  
+      <tbody>
+        {% set countrak = namespace(value=1) %}
+        {% for datarak in koderak %}
+        <tr>
+            <td>{{ countrak.value }}{% set countrak.value = countrak.value + 1 %}</td>
+            <td>{{ datarak.koderak }}</td>
+            <td>{{ datarak.namarak }}</td>
+            <!-- <td><button id="btn-edit" class="button-edit" data-toggle="modal" data-target="#editDataRak{/{/datarak[0]/}/}"><b>Edit</b></button></td> -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+  <!-- END MENAMPILKAN DATA RAK-->
+
+  <hr>
+<!-- MENAMPILKAN DATA GENRE -->
+<button class="button-cari100" onclick="showDataGenre()"><b>Data Genre</b></button>
+<div id="dataGenre" style="display: none">
+    <h4>Data Genre</h4>
+    <table border="1" id="dataGenre" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th class="th-sm">No</th>
+          <th class="th-sm">Kode Genre</th>
+          <th class="th-sm">Nama Genre</th>
+          <th>Action</th>
+        </tr>
+      </thead>  
+      <tbody>
+        {% set countgenre = namespace(value=1) %}
+        {% for datagenre in kodegenre %}
+        <tr>
+            <td>{{ countgenre.value }}{% set countgenre.value = countgenre.value + 1 %}</td>
+            <td>{{ datagenre.kodegenre }}</td>
+            <td>{{ datagenre.namagenre }}</td>
+            <!-- <td><button id="btn-edit" class="button-edit" data-toggle="modal" data-target="#editDataGenre{/{/datagenre[0]/}/}"><b>Edit</b></button></td> -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<!-- END MENAMPILKAN DATA GENRE-->
+
+{% block script %}
+<script type="text/javascript">
+  window.onload = function(){ 
+
+    var modaltambahrak = document.getElementById("modaltambahrak");
+    var modaltambahgenre = document.getElementById("modaltambahgenre");
+    
+    // Get the button that opens the modal
+
+    var btntambahrak = document.getElementById("btnmodaltambahrak");
+    var btntambahgenre = document.getElementById("btnmodaltambahgenre");
+
+    
+    // Get the <span> element that closes the modal
+
+    var spantambahrak = document.getElementsByClassName("closetambahrak")[0];
+    var spantambahgenre = document.getElementsByClassName("closetambahgenre")[0];
+    
+    // When the user clicks the button, open the modal 
+
+    btntambahrak.onclick = function() {
+      modaltambahrak.style.display = "block";
+    }
+    btntambahgenre.onclick = function() {
+      modaltambahgenre.style.display = "block";
+    }
+
+    
+    // When the user clicks on <span> (x), close the modal
+
+    spantambahrak.onclick = function() {
+      modaltambahrak.style.display = "none";
+    }
+    spantambahgenre.onclick = function() {
+      modaltambahgenre.style.display = "none";
+    }
+
+    
+    // When the user clicks anywhere outside of the modal, close it
+
+    window.onclick = function(event) {
+      if (event.target == modaltambahrak) {
+        modaltambahrak.style.display = "none";
+      }
+      else if(event.target == modaltambahgenre){
+        modaltambahgenre.style.display = "none"
+      }
+    }
+
+    };
+
+  function showDataRak() {
+  var kp = document.getElementById("dataRak");
+  if (kp.style.display === "none") {
+    kp.style.display = "block";
+  } else {
+    kp.style.display = "none";
+  }
+  };
+  function showDataGenre() {
+  var kp = document.getElementById("dataGenre");
+  if (kp.style.display === "none") {
+    kp.style.display = "block";
+  } else {
+    kp.style.display = "none";
+  }
+  };
+//   $(document).ready(function () {
+//     $('#dataRak').DataTable({
+//       "paging": "full", // false to disable pagination (or any other option)
+//       "searching":false
+//     });
+//     $('.dataTables_length').addClass('bs-select');
+//   });
+//   $(document).ready(function () {
+//     $('#dataGenre').DataTable({
+//       "paging": "full", // false to disable pagination (or any other option)
+//       "searching":false
+//     });
+//     $('.dataTables_length').addClass('bs-select');
+//   });
+</script>
+{% endblock %}
+{% endblock %}
+  <!-- MODAL EDIT DATA RAK -->
+  <!-- <div id="editDataRak{{datarak[0]}}" class="modal fade">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title text-xs-center">Edit Data Rak</h4>
+        </div>
+        <div class="modal-body">
+            <form role="form" method="POST" action='{{url_for("buku.update_kode_rak", id = datarak[0])}}'>
+                <div class="form-group">
+                    <label class="control-label">Kode Rak</label>
+                    <div>
+                        <input type="text" class="form-control input-lg" name="koderak" value="{{datarak[1]}}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Nama Rak</label>
+                    <div>
+                        <input type="text" class="form-control input-lg" name="namarak" value="{{datarak[2]}}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="button-input" type="submit">Update</button>
+                </div>
+            </form>
+            <form action="{{ url_for('buku.delete_data_rak', id=datarak[0]) }}" method="POST">
+              <input class="button-delete" type="submit" value="Delete" onclick="return confirm('Hapus data rak {{datarak[2]}}?');">
+            </form>
+        </div>
+    </div>
+  </div> -->
+  <!-- END MODAL EDIT DATA RAK-->
+    <!-- MODAL EDIT DATA GENRE -->
+  
+    <!-- <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title text-xs-center">Edit Data Genre</h4>
+        </div>
+        <div class="modal-body">
+            <form role="form" method="POST" action='{{url_for("buku.update_kode_genre", id = datagenre[0])}}'>
+                <div class="form-group">
+                    <label class="control-label">Kode Genre</label>
+                    <div>
+                        <input type="text" class="form-control input-lg" name="kodergenre" value="{{datagenre[1]}}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Nama Genre</label>
+                    <div>
+                        <input type="text" class="form-control input-lg" name="namagenre" value="{{datagenre[2]}}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="button-input" type="submit">Update</button>
+                </div>
+            </form>
+            <form action="{{ url_for('buku.delete_data_genre', id=datagenre[0]) }}" method="POST">
+              <input class="button-delete" type="submit" value="Delete" onclick="return confirm('Hapus data genre {{datagenre[2]}}?');">
+            </form>
+        </div>
+    </div> -->
+  <!-- END MODAL EDIT DATA GENRE-->

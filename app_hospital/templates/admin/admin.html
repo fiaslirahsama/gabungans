@@ -1,0 +1,181 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Hospital</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>  
+<body>
+{% extends 'dashboard/dashboard.html'%}
+
+{% block content %}
+<form name="searchForm" method="post" action='{{url_for("admin_bp.master_admin")}}'>
+    <table id="table-inputSearch">
+      <tr><td>ID Admin : </td><td><input type="text" name="id_admin" id="id"></td></tr>
+      <tr><td>Nama Admin : </td><td><input type="text" name="nama_admin" id="jdl"></td></tr>
+      <tr>
+        <td><input class="btn-search" type="submit" value="Search"></td>
+      </tr>
+    </table>   
+</form>
+  <table>
+    <tr>
+      <td>
+        <td><button class="btn-addFile" data-toggle="modal" data-target="#modalAdd">Add</button></td>
+      </td>
+    </tr>
+  </table>
+  
+  <table id="table-list" border=5>  
+      <thead>  
+          <td>ID Admin</td>  
+          <td>Nama Admin</td>
+          <td>Jabatan</td>
+          <td>Created Date</td>
+          <td>Updated Date</td>
+          <td>Edit</td>
+          <td>Delete</td>
+      </thead> 
+  
+      {% for row in datas %}
+          <tr>  
+              <td id="idPasien">{{row.id_admin}}</td>  
+              <td id="namaPasien">{{row.nama_admin}}</td>
+              <td id="alamatPasien">{{row.jabatan}}</td>
+              <td id="createdDate">{{row.created_date}}</td>
+              <td id="updatedDate">{{row.updated_date}}</td>
+              <td><button id="btn-edit" class="btn-addFile" data-toggle="modal" data-target="#editAdmin{{row.id_admin}}">Edit</button></td>
+              <td><a class="link" href='{{url_for("admin_bp.deleteAdmin", idAdmin = row.id_admin)}}' onclick="confirm('Are you sure to Delete Data ?')">Delete</a></td>
+              
+
+              <!-- Modal Edit -->
+              <div id="editAdmin{{row.id_admin}}" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-xs-center">Edit Admin</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" method="POST" action='{{url_for("admin_bp.editAdmin", idAdmin=row.id_admin)}}'>
+                                <div class="form-group">
+                                    <label class="control-label">ID Admin</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="idAdmin" value="{{row.id_admin}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Username</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="username" value="{{row.username}}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">password</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="password" value="{{row.password}}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nama Admin</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="namaAdmin" value="{{row.nama_admin}}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Jabatan</label>
+                                  <div>
+                                      <input type="text" class="form-control input-lg" name="jabatan" value="{{row.jabatan}}">
+                                  </div>
+                              </div>
+                                <div class="form-group">
+                                    <div>
+                                        <button type="submit" class="btn btn-info btn-block">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+      {% endfor %}
+  
+  </table>  
+  <br><br>
+
+  <!-- Modal ADD -->
+  <div id="modalAdd" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-xs-center">Add Admin</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" method="POST" action='{{url_for("admin_bp.addAdmin")}}'>
+                    <div class="form-group">
+                        <label class="control-label">Username</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">password</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Nama Admin</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="namaAdmin">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Jabatan</label>
+                      <div>
+                          <input type="text" class="form-control input-lg" name="jabatan">
+                      </div>
+                  </div>
+                    <div class="form-group">
+                        <div>
+                            <button type="submit" class="btn btn-info btn-block">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- Modal Import -->
+  <div id="modalImport" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-xs-center">Import Data</h4>
+            </div>
+            <div class="modal-body">
+              <form method="post" action='' enctype=multipart/form-data>
+                <div class="form-group">
+                  <label>Input File (XLSX Only)</label>
+                  <input type=file class="form-control-file" name=file>
+                  <br><br>
+                  <input type=submit value=Upload>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+{% endblock%}
+</body>
+
+</html>

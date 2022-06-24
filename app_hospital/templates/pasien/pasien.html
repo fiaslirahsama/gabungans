@@ -1,0 +1,182 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Hospital</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>  
+<body>
+{% extends 'dashboard/dashboard.html'%}
+
+{% block content %}
+<form name="searchForm" method="post" action='{{url_for("pasien_bp.master_pasien")}}'>
+    <table id="table-inputSearch">
+      <tr><td>No Pasien : </td><td><input type="text" name="no_pasien1" id="id"></td></tr>
+      <tr><td>Nama Pasien : </td><td><input type="text" name="nama_pasien1" id="jdl"></td></tr>
+      <tr>
+        <td><input class="btn-search" type="submit" value="Search"></td>
+      </tr>
+    </table>   
+</form>
+  <table>
+    <tr>
+      <td>
+        <td><button class="btn-addFile" data-toggle="modal" data-target="#modalAdd">Add</button></td>
+        <td><button class="btn-addFile" data-toggle="modal" data-target="#modalImport">Add With File</button></td>
+      </td>
+    </tr>
+  </table>
+  
+  <table id="table-list" border=5>  
+      <thead>  
+          <td>ID Pasien</td>  
+          <td>Nama Pasien</td>
+          <td>Alamat Pasien</td>
+          <td>Created Date</td>
+          <td>Updated Date</td>
+          <td>Edit</td>
+          <td>Delete</td>
+      </thead> 
+  
+      {% for row in datas %}
+          <tr>  
+              <td id="idPasien">{{row.no_pasien}}</td>  
+              <td id="namaPasien">{{row.nama_pasien}}</td>
+              <td id="alamatPasien">{{row.alamat_pasien}}</td>
+              <td id="createdDate">{{row.created_date}}</td>
+              <td id="updatedDate">{{row.updated_date}}</td>
+              <td><button id="btn-edit" class="btn-addFile" data-toggle="modal" data-target="#editPasien{{row.no_pasien}}">Edit</button></td>
+              <td><a class="link" href='{{url_for("pasien_bp.delete_pasien", no_pasien = row.no_pasien)}}' onclick="confirm('Are you sure to Delete Data ?')">Delete</a></td>
+              
+
+              <!-- Modal Edit -->
+              <div id="editPasien{{row.no_pasien}}" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-xs-center">Edit Pasien</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" method="POST" action='{{url_for("pasien_bp.edit_pasien", no_pasien=row.no_pasien)}}'>
+                                <div class="form-group">
+                                    <label class="control-label">ID Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="no_pasien1" value="{{row.no_pasien}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Username</label>
+                                  <div>
+                                      <input type="text" class="form-control input-lg" name="username1" value="{{row.username}}">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="control-label">Password</label>
+                                <div>
+                                    <input type="text" class="form-control input-lg" name="password1" value="{{row.password}}">
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nama Pasien</label>
+                                    <div>
+                                        <input type="text" class="form-control input-lg" name="nama_pasien1" value="{{row.nama_pasien}}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Alamat Pasien</label>
+                                  <div>
+                                      <input type="text" class="form-control input-lg" name="alamat_pasien1" value="{{row.alamat_pasien}}">
+                                  </div>
+                              </div>
+                                <div class="form-group">
+                                    <div>
+                                        <button type="submit" class="btn btn-info btn-block">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+      {% endfor %}
+  
+  </table>  
+  <br><br>
+
+  <!-- Modal ADD -->
+  <div id="modalAdd" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-xs-center">Add Pasien</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" method="POST" action='{{url_for("pasien_bp.add_pasien")}}'>
+                    <div class="form-group">
+                      <label class="control-label">Username</label>
+                      <div>
+                          <input type="text" class="form-control input-lg" name="username1">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">password</label>
+                      <div>
+                          <input type="text" class="form-control input-lg" name="password1">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Nama Pasien</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="nama_pasien1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Alamat Pasien</label>
+                      <div>
+                          <input type="text" class="form-control input-lg" name="alamat_pasien1">
+                      </div>
+                  </div>
+                    <div class="form-group">
+                        <div>
+                            <button type="submit" class="btn btn-info btn-block">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- Modal Import -->
+  <div id="modalImport" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-xs-center">Import Data</h4>
+            </div>
+            <div class="modal-body">
+              <form method="post" action='' enctype=multipart/form-data>
+                <div class="form-group">
+                  <label>Input File (XLSX Only)</label>
+                  <input type=file class="form-control-file" name=file>
+                  <br><br>
+                  <input type=submit value=Upload>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+{% endblock%}
+</body>
+
+</html>

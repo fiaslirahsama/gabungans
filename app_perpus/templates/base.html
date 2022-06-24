@@ -1,0 +1,45 @@
+<title>{% block title %}{% endblock %} - Administrasi Perpustakaan</title>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/datatable_jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap4.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/datatable_jquery.css') }}">
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap4.css') }}"> -->
+<script>
+      function delete_flash(flash){
+        $(flash).parent().remove()
+    }
+</script>
+
+<nav>
+  <h1>Administrasi Perpustakaan</h1>
+  <ul>
+    {% if g.admin %}
+      <li><span>Selamat Datang <b>{{ g.admin['nama'] }}</b></span>
+      <li><a class="button-base" href="{{ url_for('auth.logout') }}">Log Out</a>
+    {% else %}
+      <li><a class="button-base" href="{{ url_for('auth.register') }}">Register</a>
+        <li style="margin:5px"></li>
+      <li><a class="button-base" href="{{ url_for('auth.login') }}">Log In</a>
+    {% endif %}
+        <li style="margin:5px"></li>
+      <li><a class="button-base" href="/">App Hospital</a>
+  </ul>
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="{{ category }}">
+      {{ message }}
+      <button type="button" class="close" aria-label="Close" onclick=delete_flash(this)>
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</section>
