@@ -1,7 +1,7 @@
 # MELAKUKAN INISIASI APLIKASI PADA SAAT FLASK DIJALANKAN
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 from config import DevelopmentConfig
 import os
 from sqlalchemy import create_engine
@@ -9,18 +9,19 @@ from sqlalchemy.orm import sessionmaker
 from flask_mysqldb import MySQL
 
 db = SQLAlchemy()
-migrate2 = Migrate()
+# migrate2 = Migrate()
 
 def create_app_perpus(config=DevelopmentConfig):
     app = Flask(__name__)
+    print('perp', app)
     app.config.from_object(config)
 
     db.init_app(app)
     db.app = app
 
     #Jalankan Flask db init dan db migrate dan db upgrade dulu untuk kali pertama
-    migrate2.init_app(app, db)
-    migrate2.app = app
+    # migrate2.init_app(app, db)
+    # migrate2.app = app
 
     # mendaftarkan blueprint folder auth, buku, member, transaksi pada main app
 

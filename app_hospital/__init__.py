@@ -1,7 +1,7 @@
 from flask_login import login_required, current_user, login_user, logout_user
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 from flask_login import LoginManager
 from config import DevelopmentConfig
 import os
@@ -16,19 +16,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # This code work for calling library Flask-SQLAlchemy to use the function inside that library.
 db = SQLAlchemy()
 # This code work for calling library Flask-Migrate to use the function inside that library.
-migrate = Migrate()
+# migrate = Migrate()
 
 # The code below work for running main app with Flask framework using configuration from file config.py.
 # This code also register the blueprint from other folder / file.
 def create_app_hospital(config=DevelopmentConfig):
     app = Flask(__name__)
+    print('hosp', app)
     app.config.from_object(config)
 
     db.init_app(app)
     db.app = app
 
-    migrate.init_app(app, db)
-    migrate.app = app
+    # migrate.init_app(app, db)
+    # migrate.app = app
 
     login_manager = LoginManager()
     login_manager.init_app(app)

@@ -7,6 +7,6 @@ from app_hospital import create_app_hospital
 app_perpus = create_app_perpus()
 app = create_app_hospital()
 
-app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+multiapp = DispatcherMiddleware(app, {
     '/perpus': app_perpus
 })
